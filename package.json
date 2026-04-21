@@ -2,17 +2,31 @@
   "name": "lantern-playwright",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "lint": "echo lint placeholder",
+    "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "echo test placeholder"
+    "test": "echo 'no tests yet'",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
     "typescript": "^5.9.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

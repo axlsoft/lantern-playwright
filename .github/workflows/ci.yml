@@ -11,41 +11,53 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - run: echo "TODO: pnpm lint"
+      - run: pnpm install
+      - run: pnpm lint
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - run: echo "TODO: pnpm typecheck"
+      - run: pnpm install
+      - run: pnpm typecheck
 
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - run: echo "TODO: pnpm build"
+      - run: pnpm install
+      - run: pnpm build
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - run: echo "TODO: pnpm test"
+      - run: pnpm install
+      - run: pnpm test
