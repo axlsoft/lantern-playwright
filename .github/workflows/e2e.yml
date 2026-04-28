@@ -1,0 +1,75 @@
+name: e2e-example-suite
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "samples/example-suite/**"
+      - ".github/workflows/e2e.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
+  push:
+    branches: [main]
+
+jobs:
+  example-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: lantern-playwright
+
+      - name: Checkout collector repo
+        uses: actions/checkout@v4
+        with:
+          repository: axlsoft/lantern
+          path: lantern
+
+      - name: Checkout .NET SDK repo
+        uses: actions/checkout@v4
+        with:
+          repository: axlsoft/lantern-dotnet
+          path: lantern-dotnet
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: lantern-playwright/pnpm-lock.yaml
+
+      - name: Build plugin
+        working-directory: lantern-playwright
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Bring up stack
+        working-directory: lantern-playwright/samples/example-suite
+        run: docker compose up -d --wait
+
+      - name: Bootstrap project + API key
+        working-directory: lantern-playwright/samples/example-suite
+        run: ./scripts/bootstrap.sh
+
+      - name: Restart sample-api with credentials
+        working-directory: lantern-playwright/samples/example-suite
+        run: |
+          set -a; source .env; set +a
+          docker compose up -d sample-api
+
+      - name: Install Playwright browsers
+        working-directory: lantern-playwright/samples/example-suite
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run suite
+        working-directory: lantern-playwright/samples/example-suite
+        run: pnpm test
+
+      - name: Dump collector logs on failure
+        if: failure()
+        working-directory: lantern-playwright/samples/example-suite
+        run: docker compose logs collector sample-api

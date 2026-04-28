@@ -1,0 +1,55 @@
+name: example-suite
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lantern
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  collector:
+    build:
+      context: ../../../lantern
+      dockerfile: deploy/docker/Dockerfile.collector
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LANTERN_DATABASE_URL: postgres://postgres:postgres@postgres:5432/lantern?sslmode=disable
+      LANTERN_API_KEY_PEPPER: example-suite-pepper-do-not-use-in-prod
+      LANTERN_HTTP_ADDR: ":8080"
+      LANTERN_SMTP_HOST: mailhog
+      LANTERN_SMTP_PORT: "1025"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "/bin/collector", "--healthcheck"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  sample-api:
+    build:
+      context: ../../../lantern-dotnet
+      dockerfile: samples/SampleApi/Dockerfile
+    depends_on:
+      collector:
+        condition: service_started
+    environment:
+      Lantern__CollectorEndpoint: http://collector:8080
+      Lantern__ApiKey: ${LANTERN_API_KEY:-}
+      Lantern__ProjectId: ${LANTERN_PROJECT_ID:-}
+      ASPNETCORE_URLS: http://+:5080
+    ports:
+      - "5080:5080"
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"

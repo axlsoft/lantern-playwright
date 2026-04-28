@@ -1,27 +1,57 @@
 {
-  "name": "lantern-playwright",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@lantern/playwright",
+  "version": "0.1.0",
+  "description": "Playwright reporter and fixture for Lantern functional test coverage",
+  "license": "Apache-2.0",
   "packageManager": "pnpm@10.33.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./fixture": {
+      "types": "./dist/fixture.d.ts",
+      "import": "./dist/fixture.js",
+      "require": "./dist/fixture.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "lint": "eslint src",
+    "build": "tsup",
+    "lint": "eslint src test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "echo 'no tests yet'",
+    "test": "vitest run",
     "prepare": "husky"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.40"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
+    "@types/node": "^22.0.0",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
     "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
     "prettier": "^3.0.0",
-    "typescript": "^5.9.0"
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.0.0"
   },
   "lint-staged": {
     "*.ts": [
