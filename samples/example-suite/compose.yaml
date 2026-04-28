@@ -37,7 +37,7 @@ services:
   sample-api:
     build:
       context: ../../../lantern-dotnet
-      dockerfile: samples/SampleApi/Dockerfile
+      dockerfile: samples/SampleApi/Dockerfile.sampleapi
     depends_on:
       collector:
         condition: service_started
