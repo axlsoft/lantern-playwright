@@ -16,6 +16,18 @@ export default [
     },
   },
   {
+    files: ["test/**/*.ts"],
+    languageOptions: {
+      parser: tsparser,
+    },
+    plugins: { "@typescript-eslint": tseslint },
+    rules: {
+      ...tseslint.configs["recommended"].rules,
+      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
+  {
     ignores: ["dist/**", "node_modules/**"],
   },
 ];
